@@ -174,7 +174,7 @@ networks:
 
 ```properties
 # Porta do Spring Boot do Producer
-server.port=${SERVER_PORT:9090}
+server.port=${SERVER_PRODUCER_PORT:9090}
 
 # Nome da aplicação Spring Boot
 spring.application.name=sb-kafka-producer
@@ -190,7 +190,7 @@ topics.payment.request.topic=${KAFKA_PAYMENT_REQUEST_TOPIC:pagamento.request.top
 
 ```properties
 # Porta do Spring Boot do Consumer
-server.port=${SERVER_PORT:8080}
+server.port=${SERVER_CONSUMER_PORT:8080}
 
 # Nome da aplicação Spring Boot
 spring.application.name=sb-kafka-consumer
