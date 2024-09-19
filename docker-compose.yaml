@@ -1,0 +1,56 @@
+services:
+  kafka:
+    image: apache/kafka:3.8.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_METADATA_LOG_DIRS: /var/lib/kafka/meta
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    networks:
+      - bootcamp-network
+
+  springboot-producer:
+    container_name: sb-kafka-producer-app
+    build:
+      context: .
+      dockerfile: sb-kafka-producer/Dockerfile
+      args:
+        JAVA_VERSION: 21
+        GRADLE_VERSION: 8.8
+    ports:
+      - '9090:9090'
+    depends_on:
+      - kafka
+    networks:
+      - bootcamp-network
+
+  springboot-consumer:
+    container_name: sb-kafka-consumer-app
+    build:
+      context: .
+      dockerfile: sb-kafka-consumer/Dockerfile
+      args:
+        JAVA_VERSION: 21
+        GRADLE_VERSION: 8.8
+    ports:
+      - '8080:8080'
+    depends_on:
+      - kafka
+    networks:
+      - bootcamp-network
+
+networks:
+  bootcamp-network:
+    driver: bridge
